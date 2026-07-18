@@ -222,3 +222,5 @@ __marimo__/
 __pycache__/
 conflict.txt
 report.pdf
+report_output.txt
+thesis.pdf

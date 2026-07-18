@@ -28,17 +28,17 @@ else:
     document = read_txt_file(txt_path)
 
 prompt = f"""
-你是一个社区管理记录助手。
-请根据下面的管理文档，输出一份简短的管理报表。
+你是一个文档分析助手。
+请根据下面的文档，分析文档中的内容。
 
 要求：
-1. 总结主要事件
-2. 提取已经采取的管理动作
-3. 列出未解决问题
-4. 列出后续待办
-5. 不要编造聊天记录中没有的信息
+1. 总结文档中的主要内容
+2. 提取文档中的关键信息
+3. 分析文档中的问题和解决方案
+4. 不要编造文档中没有的信息
 
-管理文档：
+必须以markdown格式输出。
+文档：
 {document}
 """
 
@@ -47,4 +47,20 @@ response = client.responses.create(
     input=prompt
 )
 
-print(response.output_text)
+output_text = response.output_text
+
+# 让用户选择输出方式：打印、保存为 txt，或两者都要
+output_type = input(
+    "请选择输出方式（1: 打印到屏幕，2: 保存为 txt，3: 同时打印+保存，默认 1）："
+).strip()
+
+if output_type in ("2", "3"):
+    save_path = input("请输入保存的 txt 文件路径（默认 report_output.txt）：").strip()
+    if not save_path:
+        save_path = "report_output.txt"
+    with open(save_path, "w", encoding="utf-8") as f:
+        f.write(output_text)
+    print(f"已保存到：{save_path}")
+
+if output_type != "2":
+    print(output_text)
