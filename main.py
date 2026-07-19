@@ -1,15 +1,63 @@
+import json
+import os
+from datetime import datetime
+
 from openai import OpenAI
 from dotenv import load_dotenv
 
-from scraper import get_upcoming_matches_text
+from scraper import format_matches_text, get_upcoming_matches_text, scrape_all
 
 load_dotenv()
 
+OUTPUT_DIR = "Matches"
+
+
+def save_output(content: str, base_name: str, ext: str) -> str:
+    """把内容保存到 Matches 文件夹，文件名加上时间戳。"""
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = f"{base_name}_{timestamp}.{ext}"
+    save_path = os.path.join(OUTPUT_DIR, filename)
+    with open(save_path, "w", encoding="utf-8") as f:
+        f.write(content)
+    return save_path
+
+
+# 开始阶段选择运行模式：是否使用 LLM
+mode = input(
+    "请选择运行模式（1: 使用 LLM 生成比赛规划，2: 仅输出爬取的比赛，默认 1）："
+).strip()
+
+clubs_path = "clubs.json"
+
+# 模式 2：不使用 LLM，直接输出爬取的比赛
+if mode == "2":
+    print("正在抓取俱乐部比赛信息，请稍候……")
+    results = scrape_all(clubs_path)
+    matches_json = json.dumps(results, ensure_ascii=False, indent=2)
+    matches_text = format_matches_text(results)
+
+    output_type = input(
+        "请选择输出方式（1: 打印到屏幕，2: 保存为文件，3: 同时打印+保存，默认 1）："
+    ).strip()
+
+    if output_type in ("2", "3"):
+        # JSON 与「交给 LLM 的文本」都保存到 Matches，文件名带时间戳
+        json_path = save_output(matches_json, "matches", "json")
+        txt_path = save_output(matches_text, "matches", "txt")
+        print(f"已保存到：{json_path}")
+        print(f"已保存到：{txt_path}")
+
+    if output_type != "2":
+        print(matches_json)
+
+    raise SystemExit(0)
+
+
+# 模式 1：使用 LLM 生成比赛规划
 client = OpenAI()
 
-
 # 从俱乐部网站抓取即将进行的比赛
-clubs_path = "clubs.json"
 print("正在抓取俱乐部比赛信息，请稍候……")
 document = get_upcoming_matches_text(clubs_path)
 
@@ -49,11 +97,7 @@ output_type = input(
 ).strip()
 
 if output_type in ("2", "3"):
-    save_path = input("请输入保存的 txt 文件路径（默认 report_output.md）：").strip()
-    if not save_path:
-        save_path = "report_output.md"
-    with open(save_path, "w", encoding="utf-8") as f:
-        f.write(output_text)
+    save_path = save_output(output_text, "report_output", "md")
     print(f"已保存到：{save_path}")
 
 if output_type != "2":
