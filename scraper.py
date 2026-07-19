@@ -65,7 +65,11 @@ def parse_upcoming_matches(html: str) -> list[dict]:
             if len(divs) >= 2:
                 discipline = _clean(divs[1].get_text())
 
-        if name:
+        # 只保留 USPSA / IPSC 的比赛，排除其他项目
+        discipline_upper = discipline.upper()
+        is_uspsa_or_ipsc = "USPSA" in discipline_upper or "IPSC" in discipline_upper
+
+        if name and is_uspsa_or_ipsc:
             matches.append(
                 {
                     "name": name,
