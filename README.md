@@ -1,5 +1,4 @@
-# LLM-AgentAI-Development-Test
-
+# USPSA-Match-Planner-with-LLM
 一个 LLM / Agent AI 的实践项目：自动爬取 [PractiScore](https://practiscore.com) 俱乐部页面的「即将进行的比赛」信息，交给大模型（OpenAI GPT）为射手生成**比赛规划与训练安排**。
 
 ## 功能简介
