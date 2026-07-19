@@ -3,7 +3,7 @@
 
 ## 功能简介
 
-- **爬虫（`scraper.py`）**：读取 `clubs.json` 中的俱乐部列表，抓取每个俱乐部页面的 *Upcoming Matches*，解析出比赛名称、日期、项目/级别、报名状态与链接。使用 `cloudscraper`爬取，再用 `BeautifulSoup` 解析。
+- **爬虫（`scraper.py`）**：读取 `Informations/clubs.json` 中的俱乐部列表，抓取每个俱乐部页面的 *Upcoming Matches*，解析出比赛名称、日期、项目/级别、报名状态与链接。使用 `cloudscraper`爬取，再用 `BeautifulSoup` 解析。
 - **规划助手（`main.py`）**：把抓取到的比赛信息组织成提示词，调用 OpenAI 模型，以射击教练的视角生成参赛建议、阶段性训练计划、备赛重点、报名提醒等，并以 Markdown 输出。
 - **两种运行模式**：启动时可选择「使用 LLM 生成比赛规划」或「仅输出爬取的比赛」（不调用 LLM，也就无需 API Key）。
 - **归档输出**：所有保存的输出文件名自动带时间戳，避免覆盖历史结果。爬取数据存入 `Matches/`，LLM 生成的报告存入 `Past_Reports/`（方便后续 AgentAI 调用历史报告作为上下文）。
@@ -14,7 +14,8 @@
 .
 ├── main.py            # 主程序：选择模式 -> 抓取比赛 -> 输出规划或原始数据
 ├── scraper.py         # 爬虫模块：抓取并解析 Upcoming Matches
-├── clubs.json         # 俱乐部列表（name + url）
+├── Informations/
+│   └── clubs.json     # 俱乐部列表（name + url）
 ├── requirements.txt   # 依赖
 ├── Matches/           # 爬取数据输出目录（自动生成，已被 .gitignore 忽略）
 ├── Past_Reports/      # LLM 报告归档目录（自动生成，已被 .gitignore 忽略）
@@ -44,7 +45,7 @@ OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxx
 
 ### 1. 配置俱乐部列表
 
-编辑 `clubs.json`，填入想要跟踪的 PractiScore 俱乐部（`name` 为显示名称，`url` 为俱乐部主页地址）：
+编辑 `Informations/clubs.json`，填入想要跟踪的 PractiScore 俱乐部（`name` 为显示名称，`url` 为俱乐部主页地址）：
 
 ```json
 [
@@ -65,7 +66,7 @@ python main.py
 
 #### 模式 1：使用 LLM 生成比赛规划（默认）
 
-1. 抓取 `clubs.json` 中所有俱乐部的即将进行的比赛；
+1. 抓取 `Informations/clubs.json` 中所有俱乐部的即将进行的比赛；
 2. 调用大模型生成比赛规划与训练安排；
 3. 询问输出方式：
    - `1`（默认）：打印到屏幕
