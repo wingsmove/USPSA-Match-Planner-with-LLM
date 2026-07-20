@@ -33,6 +33,9 @@ SCORE_FIELDS = [
 ]
 
 
+SCORES_DB_PATH = os.path.join(PAST_SCORES_DIR, "scores_db.json")  # 累积所有成绩的 JSON 数据库
+
+
 def save_output(content: str, base_name: str, ext: str, out_dir: str = MATCHES_DIR) -> str:
     """把内容保存到指定文件夹，文件名加上时间戳。"""
     os.makedirs(out_dir, exist_ok=True)
@@ -42,6 +45,35 @@ def save_output(content: str, base_name: str, ext: str, out_dir: str = MATCHES_D
     with open(save_path, "w", encoding="utf-8") as f:
         f.write(content)
     return save_path
+
+
+def append_scores_to_db(records: list[dict]) -> str:
+    """把本次导入的成绩追加写入 JSON 数据库文件，返回数据库路径。
+
+    每条记录附带 imported_at（导入时间）以区分不同批次。
+    """
+    os.makedirs(PAST_SCORES_DIR, exist_ok=True)
+
+    # 读取已有数据库（文件损坏时以空库重来，避免直接崩溃）
+    db = []
+    if os.path.exists(SCORES_DB_PATH):
+        try:
+            with open(SCORES_DB_PATH, "r", encoding="utf-8") as f:
+                db = json.load(f)
+            if not isinstance(db, list):
+                db = []
+        except (json.JSONDecodeError, OSError):
+            print(f"[警告] {SCORES_DB_PATH} 无法读取，将新建数据库。")
+            db = []
+
+    imported_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    for record in records:
+        db.append({"imported_at": imported_at, **record})
+
+    with open(SCORES_DB_PATH, "w", encoding="utf-8") as f:
+        json.dump(db, f, ensure_ascii=False, indent=2)
+
+    return SCORES_DB_PATH
 
 
 def parse_score_line(line: str) -> dict | None:
@@ -217,9 +249,9 @@ if mode == "3":
 
     scores_json = json.dumps(records, ensure_ascii=False, indent=2)
 
-    # 成绩 JSON 保存到 Past_Scores，方便后续查询/对比/做数据库
-    scores_path = save_output(scores_json, "scores", "json", out_dir=PAST_SCORES_DIR)
-    print(f"成绩已保存到：{scores_path}")
+    # 追加写入 JSON 数据库，作为累积成绩的临时数据库，方便后续查询/对比
+    db_path = append_scores_to_db(records)
+    print(f"本次 {len(records)} 条成绩已写入数据库：{db_path}")
 
     # 选择：调用大模型分析，还是仅导出 JSON
     analyze = input(
