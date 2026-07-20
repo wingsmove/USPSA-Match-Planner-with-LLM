@@ -1,4 +1,4 @@
-"""文件保存、成绩数据库读写等存储相关工具。"""
+#文件保存、成绩数据库读写等存储相关工具
 
 import json
 import os
@@ -6,9 +6,8 @@ from datetime import datetime
 
 from config import MATCHES_DIR, PAST_SCORES_DIR, SCORES_DB_PATH
 
-
+#保存输出
 def save_output(content: str, base_name: str, ext: str, out_dir: str = MATCHES_DIR) -> str:
-    """把内容保存到指定文件夹，文件名加上时间戳。"""
     os.makedirs(out_dir, exist_ok=True)
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     filename = f"{base_name}_{timestamp}.{ext}"
@@ -17,12 +16,8 @@ def save_output(content: str, base_name: str, ext: str, out_dir: str = MATCHES_D
         f.write(content)
     return save_path
 
-
+#追加成绩到数据库
 def append_scores_to_db(records: list[dict]) -> str:
-    """把本次导入的成绩追加写入 JSON 数据库文件，返回数据库路径。
-
-    每条记录附带 imported_at（导入时间）以区分不同批次。
-    """
     os.makedirs(PAST_SCORES_DIR, exist_ok=True)
 
     # 读取已有数据库（文件损坏时以空库重来，避免直接崩溃）
@@ -46,9 +41,8 @@ def append_scores_to_db(records: list[dict]) -> str:
 
     return SCORES_DB_PATH
 
-
+#读取目录下所有文件
 def read_dir_files(directory: str, extension: str) -> str:
-    """读取指定目录下所有某扩展名的文件，返回「文件名 + 内容」的合并文本。"""
     if not os.path.isdir(directory):
         return f"（{directory} 目录不存在或暂无文件）"
     filenames = sorted(f for f in os.listdir(directory) if f.endswith(extension))

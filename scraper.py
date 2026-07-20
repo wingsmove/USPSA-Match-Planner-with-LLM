@@ -1,43 +1,27 @@
-"""爬取 clubs.json 中俱乐部页面的 "Upcoming Matches" 信息。
-
-目标站点 practiscore.com 使用 Cloudflare 防护，普通请求会返回 403，
-因此这里使用 cloudscraper 绕过 "Just a moment..." 挑战，再用 BeautifulSoup 解析。
-"""
-
 import json
 import re
 
 import cloudscraper
 from bs4 import BeautifulSoup
 
-
+#读取俱乐部列表
 def load_clubs(path: str = "Informations/clubs.json") -> list[dict]:
-    """读取俱乐部列表。"""
     with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
 
-
+#抓取页面 HTML
 def fetch_html(url: str, timeout: int = 60) -> str:
-    """抓取页面 HTML（自动处理 Cloudflare 挑战）。"""
     scraper = cloudscraper.create_scraper()
     response = scraper.get(url, timeout=timeout)
     response.raise_for_status()
     return response.text
 
-
+#清理文本
 def _clean(text: str) -> str:
-    """把多余空白折叠成单个空格。"""
     return re.sub(r"\s+", " ", text).strip()
 
-
+#解析即将进行的比赛
 def parse_upcoming_matches(html: str) -> list[dict]:
-    """从俱乐部页面 HTML 中解析出即将进行的比赛。
-
-    每场比赛对应一个 <div class="clearfix" id="item_XXXX">，包含：
-      - 状态标签 (span.label)：如 open / Private: opens in 2 weeks
-      - 名称 (strong)：可能是链接，也可能是纯文本（如 Private Match）
-      - 日期与项目 (small 内的两个 div)
-    """
     soup = BeautifulSoup(html, "html.parser")
     matches = []
 
@@ -82,16 +66,14 @@ def parse_upcoming_matches(html: str) -> list[dict]:
 
     return matches
 
-
+#抓取单个俱乐部的即将进行的比赛
 def scrape_club(club: dict) -> dict:
-    """抓取单个俱乐部的即将进行的比赛。"""
     html = fetch_html(club["url"])
     matches = parse_upcoming_matches(html)
     return {"name": club.get("name", ""), "url": club["url"], "matches": matches}
 
-
+#抓取所有俱乐部的即将进行的比赛
 def scrape_all(path: str = "Informations/clubs.json") -> list[dict]:
-    """抓取 clubs.json 中所有俱乐部。"""
     results = []
     for club in load_clubs(path):
         try:
@@ -100,9 +82,8 @@ def scrape_all(path: str = "Informations/clubs.json") -> list[dict]:
             print(f"[警告] 抓取失败 {club.get('name', club.get('url'))}: {exc}")
     return results
 
-
+#格式化比赛文本
 def format_matches_text(results: list[dict]) -> str:
-    """把抓取结果格式化为纯文本，供大模型阅读。"""
     lines = []
     for club in results:
         lines.append(f"# 俱乐部：{club['name']}")
@@ -125,7 +106,6 @@ def format_matches_text(results: list[dict]) -> str:
 
 
 def get_upcoming_matches_text(path: str = "Informations/clubs.json") -> str:
-    """对外主入口：抓取并返回格式化后的比赛文本。"""
     return format_matches_text(scrape_all(path))
 
 

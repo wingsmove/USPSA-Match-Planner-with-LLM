@@ -1,5 +1,3 @@
-"""命令行入口：选择运行模式并调度对应的处理流程。"""
-
 import json
 
 from dotenv import load_dotenv
@@ -12,13 +10,8 @@ from storage import append_scores_to_db, save_output
 
 load_dotenv()
 
-
+#选择输出方式
 def choose_and_output(saveables: list[tuple], printable: str) -> None:
-    """让用户选择输出方式，并按选择保存/打印。
-
-    saveables: 需要保存的内容列表，每项为 (content, base_name, ext, out_dir)。
-    printable: 选择打印时要输出到屏幕的文本。
-    """
     output_type = input(
         "请选择输出方式（1: 打印到屏幕，2: 保存为文件，3: 同时打印+保存，默认 1）："
     ).strip()
@@ -32,8 +25,8 @@ def choose_and_output(saveables: list[tuple], printable: str) -> None:
         print(printable)
 
 
+#录入成绩 -> 写入数据库 -> （可选）交给成绩分析 Agent
 def run_score_analysis() -> None:
-    """模式 3：录入成绩 -> 写入数据库 -> （可选）交给成绩分析 Agent。"""
     records = read_scores_from_input()
     if not records:
         print("未输入任何有效成绩数据，已退出。")
@@ -58,9 +51,8 @@ def run_score_analysis() -> None:
         output_text,
     )
 
-
+#抓取比赛并直接导出
 def run_match_export() -> None:
-    """模式 2：抓取比赛并直接导出（不调用 LLM）。"""
     print("正在抓取俱乐部比赛信息，请稍候……")
     results = scrape_all(CLUBS_PATH)
     matches_json = json.dumps(results, ensure_ascii=False, indent=2)
@@ -75,9 +67,8 @@ def run_match_export() -> None:
         matches_json,
     )
 
-
+#抓取比赛并交给比赛规划 Agent 生成日程规划
 def run_match_planning() -> None:
-    """模式 1：抓取比赛并交给比赛规划 Agent 生成日程规划。"""
     print("正在抓取俱乐部比赛信息，请稍候……")
     document = get_upcoming_matches_text(CLUBS_PATH)
 

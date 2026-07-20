@@ -1,22 +1,16 @@
-"""成绩数据的解析与交互式录入。"""
+#成绩数据的解析与录入
 
 from config import SCORE_FIELDS
 
-
+#解析成绩
 def parse_score_line(line: str) -> dict | None:
-    """把一行成绩解析为结构化字典。
-
-    列顺序固定为 15 列，各列均为单个 token（division 使用简写如 CO/LO），
-    按空格切分后与字段一一对应即可。
-    """
     tokens = line.split()
     if len(tokens) < len(SCORE_FIELDS):
         return None
     return dict(zip(SCORE_FIELDS, tokens))
 
-
+#录入成绩
 def read_scores_from_input() -> list[dict]:
-    """提示并逐行读取用户粘贴的成绩，解析为结构化记录列表。"""
     print("列顺序如下：")
     print("%  Pts  Time  % psbl  Div  Class  PF  A  C  D  M  NPM  NS  Proc  Apen")
     print("Div 可用简写：CO / LO / Limited / Open / PCC 等")

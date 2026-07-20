@@ -1,32 +1,22 @@
-"""定义两个 AI Agent（比赛规划、成绩分析）及其工具与运行封装。"""
+#定义AI Agent及其工具与运行封装
 
 from agents import Agent, Runner, function_tool
 
 from config import MODEL, PAST_REPORTS_DIR, PAST_SCORES_DIR
 from storage import read_dir_files
 
-
+#读取历史成绩数据
 @function_tool
 def get_past_scores() -> str:
-    """读取历史成绩数据（Past_Scores 文件夹中所有 JSON 文件）。
-
-    当你需要把本次成绩与过往成绩做对比、观察进步或退步趋势时调用。
-    返回每个历史成绩文件的名称与 JSON 内容。
-    """
     return read_dir_files(PAST_SCORES_DIR, ".json")
 
-
+#读取历史分析报告
 @function_tool
 def get_past_reports() -> str:
-    """读取历史分析报告（Past_Reports 文件夹中所有 Markdown 文件）。
-
-    当你需要参考过往对我的分析结论与训练建议、保持建议连贯时调用。
-    返回每个历史报告文件的名称与内容。
-    """
     return read_dir_files(PAST_REPORTS_DIR, ".md")
 
 
-# Agent 1：比赛规划顾问（只负责参赛日程规划，训练/提升分析交给成绩分析师）
+# Agent 1：比赛规划
 planning_agent = Agent(
     name="Match Planning Coach",
     model=MODEL,
@@ -74,9 +64,8 @@ score_agent = Agent(
 """,
 )
 
-
+#运行指定 Agent 并返回文本结果，同时打印工具调用的调试信息。
 def run_agent(agent: Agent, data: str) -> str:
-    """运行指定 Agent 并返回文本结果，同时打印工具调用的调试信息。"""
     print("正在调用大模型，请稍候……")
     result = Runner.run_sync(agent, data)
 

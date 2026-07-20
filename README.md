@@ -4,7 +4,7 @@
 
 ## 功能简介
 
-- **爬虫（`scraper.py`）**：读取 `Informations/clubs.json` 中的俱乐部列表，抓取每个俱乐部页面公开展示的 *Upcoming Matches*，解析出比赛名称、日期、项目/级别、报名状态与链接（仅保留 USPSA / IPSC 比赛）。使用 `cloudscraper` + `BeautifulSoup` 抓取并解析页面。
+- **爬虫（`scraper.py`）**：读取 `Informations/clubs.json` 中的俱乐部列表，抓取每个俱乐部页面公开展示的 *Upcoming Matches*，解析出比赛名称、日期、项目/级别、报名状态与链接（仅保留 USPSA / IPSC 比赛）。
 - **两个 AI Agent（`main.py`）**：
   - **比赛规划 Agent**（`planning_agent`）：只负责参赛日程规划——梳理比赛时间线、给出参赛建议、报名提醒与链接。
   - **成绩分析 Agent**（`score_agent`）：负责训练与提升的深入分析——总体评价、失分点、升级重点、阶段性训练计划、备赛重点。该 Agent 挂载了两个工具，可由模型**自行决定是否调用**：
@@ -31,7 +31,7 @@
 ## 环境要求
 
 - Python 3.10+
-- 一个有效的 OpenAI API Key（模式 2 纯爬取除外）
+- 一个有效的 OpenAI API Key（模式2或模式3的纯输出模式除外）
 
 ## 安装
 
@@ -49,7 +49,7 @@ OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxx
 
 ## 使用方法
 
-编辑 `Informations/clubs.json`，填入想要跟踪的 PractiScore 俱乐部：
+编辑 `Informations/clubs.json`，填入想要跟踪的俱乐部：
 
 ```json
 [
@@ -112,7 +112,7 @@ python scraper.py
 - 输出均带时间戳：爬取数据在 `Matches/`，结构化成绩在 `Past_Scores/`，LLM 报告在 `Past_Reports/`。
 - 上述三个输出目录以及 `.env`、`*.txt`、`*.pdf` 等均已在 `.gitignore` 中忽略，不会被提交（其中含个人成绩与密钥，请勿手动加入版本库）。
 - `Past_Scores/` 的历史成绩与 `Past_Reports/` 的历史报告，会作为成绩分析 Agent 工具的数据来源，用于纵向对比与延续建议。
-- 当前 Agent 的指令假设使用者是一名希望从 **C 级升到 B 级** 的 USPSA 射手，可在 `main.py` 中调整各 Agent 的 `instructions`。
+- 当前 Agent 的指令假设使用者是一名希望从 **C 级升到 B 级** 的 USPSA 射手，可在 `coach_agents.py` 中调整各 Agent 的 `instructions`。
 
 ## 使用须知
 

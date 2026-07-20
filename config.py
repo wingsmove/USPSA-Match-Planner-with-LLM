@@ -1,4 +1,4 @@
-"""集中管理项目的路径、模型等配置常量。"""
+#集中管理项目的路径、模型等配置常量
 
 import os
 
@@ -22,7 +22,7 @@ SCORE_FIELDS = [
     "points",                     # Pts：得分
     "time",                       # Time：用时（秒）
     "percent_possible",           # % psbl：命中可能得分的百分比
-    "division",                   # Div：分区（CO/LO/Limited/Open/PCC 等）
+    "division",                   # Div：分区（CO/LO/Limited/Open/PCC等）
     "class",                      # Class：级别（U/D/C/B/A/M/GM）
     "power_factor",               # PF：动力因子（MAJOR/MINOR）
     "hits_A",                     # A：A 区命中数
