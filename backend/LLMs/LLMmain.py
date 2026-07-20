@@ -92,5 +92,5 @@ def main() -> None:
         run_match_planning()
 
 
-if __name__ == "__main__":
+if __name__ == "__LLMmain__":
     main()

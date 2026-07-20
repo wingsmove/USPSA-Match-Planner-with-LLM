@@ -4,8 +4,10 @@ import re
 import cloudscraper
 from bs4 import BeautifulSoup
 
+from config import CLUBS_PATH
+
 #读取俱乐部列表
-def load_clubs(path: str = "Informations/clubs.json") -> list[dict]:
+def load_clubs(path: str = CLUBS_PATH) -> list[dict]:
     with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
 
@@ -72,15 +74,19 @@ def scrape_club(club: dict) -> dict:
     matches = parse_upcoming_matches(html)
     return {"name": club.get("name", ""), "url": club["url"], "matches": matches}
 
-#抓取所有俱乐部的即将进行的比赛
-def scrape_all(path: str = "Informations/clubs.json") -> list[dict]:
+#抓取给定俱乐部列表的即将进行的比赛（俱乐部可来自文件，也可来自数据库）
+def scrape_clubs(clubs: list[dict]) -> list[dict]:
     results = []
-    for club in load_clubs(path):
+    for club in clubs:
         try:
             results.append(scrape_club(club))
         except Exception as exc:  # 单个俱乐部失败不影响其余
             print(f"[警告] 抓取失败 {club.get('name', club.get('url'))}: {exc}")
     return results
+
+#抓取所有俱乐部的即将进行的比赛（从 clubs.json 读取俱乐部列表）
+def scrape_all(path: str = CLUBS_PATH) -> list[dict]:
+    return scrape_clubs(load_clubs(path))
 
 #格式化比赛文本
 def format_matches_text(results: list[dict]) -> str:
@@ -105,7 +111,7 @@ def format_matches_text(results: list[dict]) -> str:
     return "\n".join(lines)
 
 
-def get_upcoming_matches_text(path: str = "Informations/clubs.json") -> str:
+def get_upcoming_matches_text(path: str = CLUBS_PATH) -> str:
     return format_matches_text(scrape_all(path))
 
 

@@ -226,3 +226,8 @@ __pycache__/
 Matches/
 Past_Reports/
 Past_Scores/
+
+# 全栈相关
+*.db
+node_modules/
+frontend/dist/

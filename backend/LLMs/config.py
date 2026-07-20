@@ -2,16 +2,20 @@
 
 import os
 
-# 输出目录
-MATCHES_DIR = "Matches"          # 爬取的比赛数据
-PAST_REPORTS_DIR = "Past_Reports"  # LLM 生成的历史报告，供后续 AgentAI 调用
-PAST_SCORES_DIR = "Past_Scores"    # 结构化成绩数据，便于查询/对比/做数据库
+# 仓库根目录：本文件位于 <root>/backend/LLMs/config.py，向上三层即根目录。
+# 用绝对路径，保证无论从哪个目录运行脚本都能正确找到数据文件夹。
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+# 输出目录（均位于仓库根目录）
+MATCHES_DIR = os.path.join(BASE_DIR, "Matches")          # 爬取的比赛数据
+PAST_REPORTS_DIR = os.path.join(BASE_DIR, "Past_Reports")  # LLM 生成的历史报告，供后续 AgentAI 调用
+PAST_SCORES_DIR = os.path.join(BASE_DIR, "Past_Scores")    # 结构化成绩数据，便于查询/对比/做数据库
 
 # 累积所有成绩的 JSON 数据库
 SCORES_DB_PATH = os.path.join(PAST_SCORES_DIR, "scores_db.json")
 
 # 俱乐部列表
-CLUBS_PATH = "Informations/clubs.json"
+CLUBS_PATH = os.path.join(BASE_DIR, "Informations", "clubs.json")
 
 # 使用的大模型
 MODEL = "gpt-5"

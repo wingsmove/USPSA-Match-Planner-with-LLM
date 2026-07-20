@@ -1,0 +1,222 @@
+.container {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px;
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+h1 {
+  text-align: center;
+}
+
+.card {
+  width: 100%;
+  box-sizing: border-box;      /* padding 计入宽度，保证两张卡片宽度一致 */
+  background: #1e1e1e;
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+  overflow-x: auto;            /* 表格过宽时在卡片内部横向滚动，而不是撑宽卡片 */
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+  align-items: end;
+}
+
+.form-grid label {
+  display: flex;
+  flex-direction: column;
+  font-size: 13px;
+  gap: 4px;
+}
+
+.form-grid input {
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid #555;
+  background: #2a2a2a;
+  color: inherit;
+}
+
+.form-grid button {
+  grid-column: 1 / -1;    /* 占满整行（从第一条网格线到最后一条） */
+  justify-self: center;   /* 在这一整行里水平居中 */
+  padding: 8px 32px;
+  border-radius: 8px;
+  border: none;
+  background: #4f8cff;
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.form-grid button:hover {
+  background: #3a78f0;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #333;
+  text-align: left;
+  font-size: 14px;
+}
+
+th {
+  color: #9ab;
+}
+
+.delete-button{
+  border: none;
+  padding: 4px 8px;
+  background: #FF0000;
+  border-radius: 4px;
+}
+
+.delete-button:hover{
+  background: #ff6565;
+  cursor: pointer;
+}
+
+/* 顶部标签导航 */
+.tabs {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.tab {
+  padding: 8px 20px;
+  border: 1px solid #333;
+  border-radius: 8px;
+  background: #1e1e1e;
+  color: inherit;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.tab:hover {
+  border-color: #4f8cff;
+}
+
+.tab.active {
+  background: #4f8cff;
+  border-color: #4f8cff;
+  color: white;
+  font-weight: 600;
+}
+
+/* LLM 分析页 */
+.analyze-button {
+  padding: 10px 24px;
+  border: none;
+  border-radius: 8px;
+  background: #4f8cff;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.analyze-button:hover {
+  background: #3a78f0;
+}
+
+.analyze-button:disabled {
+  background: #555;
+  cursor: not-allowed;
+}
+
+.report {
+  margin-top: 16px;
+  padding: 16px;
+  background: #14151a;
+  border: 1px solid #333;
+  border-radius: 8px;
+  white-space: pre-wrap;      /* 自动换行，保留 markdown 换行 */
+  word-break: break-word;
+  font-family: var(--mono, monospace);
+  font-size: 14px;
+  line-height: 1.6;
+  text-align: left;
+}
+
+.analyze-card {
+  width: 100%;
+  box-sizing: border-box;      /* padding 计入宽度，保证两张卡片宽度一致 */
+  background: #1e1e1e;
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+  overflow-x: auto;            /* 表格过宽时在卡片内部横向滚动，而不是撑宽卡片 */
+}
+
+.analyze-card h2 {
+  margin-bottom: 12px;
+}
+
+.analyze-card p {
+  margin-bottom: 12px;
+}
+
+.tabs button{
+  display: flex;
+  flex-direction: row;
+}
+
+.form-flex-row{
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  align-items: end;   /* 各项底部对齐，输入框底边齐平 */
+}
+
+/* 表单里的每个 label：文字在上、输入框在下 */
+.form-flex-row label{
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+}
+
+/* URL 这一项占满整行剩余空间（Club Name 之外） */
+.url-label{
+  flex: 1;
+}
+
+.club-name-input{
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid #555;
+  background: #2a2a2a;
+  color: inherit;
+}
+
+.url-input{
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid #555;
+  background: #2a2a2a;
+  color: inherit;
+}
+
+.form-flex-row button{
+  padding: 6px 16px;
+  border-radius: 8px;
+  border: none;
+  background: #4f8cff;
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+}
