@@ -221,6 +221,8 @@ __marimo__/
 .venv/
 __pycache__/
 *.txt
+!requirements.txt
+!backend/requirements.txt
 *.pdf
 
 Matches/
