@@ -37,11 +37,26 @@
 │       └── LLMmain.py       # 旧版命令行入口（可选）
 ├── frontend/                # 前端（React + TypeScript + Vite）
 │   └── src/
-│       ├── App.tsx          # 外壳：顶部标签导航
-│       ├── api.ts           # 共享 API 地址与类型
-│       └── pages/
-│           ├── ScoresPage.tsx  # 成绩看板：CRUD + LLM 成绩分析
-│           └── ClubsPage.tsx   # 俱乐部看板：CRUD + LLM 比赛规划
+│       ├── App.tsx          # 应用外壳：组合导航和当前页面
+│       ├── api.ts           # API 地址、统一请求与错误处理
+│       ├── components/      # 跨业务复用组件
+│       │   ├── ai/
+│       │   │   └── AgentResultCard.tsx  # LLM 操作、等待状态与结果
+│       │   ├── layout/
+│       │   │   └── DashboardTabs.tsx    # 看板导航
+│       │   └── ui/
+│       │       ├── DataTable.tsx         # 泛型数据表格
+│       │       ├── FormField.tsx         # 通用表单字段
+│       │       └── SectionCard.tsx       # 通用内容卡片
+│       ├── features/        # 按业务领域组织的组件、配置与类型
+│       │   ├── scores/      # 成绩表单、表格、字段配置和类型
+│       │   └── clubs/       # 俱乐部表单、表格和类型
+│       ├── hooks/
+│       │   └── useCrudCollection.ts      # 复用 CRUD 与加载状态
+│       ├── pages/
+│       │   ├── ScoresPage.tsx            # 组合成绩功能
+│       │   └── ClubsPage.tsx             # 组合俱乐部功能
+│       └── styles/          # layout、forms、tables、agent 样式模块
 ├── Informations/clubs.json  # 俱乐部列表（供 CLI 使用）
 ├── Matches/                 # 爬取数据输出（仅限命令行自动生成，已忽略）
 ├── Past_Reports/            # LLM 报告归档（仅限命令行自动生成，已忽略）
@@ -87,7 +102,38 @@ npm install                            # 首次安装
 npm run dev
 ```
 
+前端默认请求 `http://127.0.0.1:8000`。如后端运行在其他地址，可在启动或构建前设置：
+
+```bash
+VITE_API_URL=https://your-api.example.com
+```
+
+不要把 `OPENAI_API_KEY` 放进 `VITE_*` 变量；Vite 会把这类变量写入浏览器端代码。
+
 - 打开 http://localhost:5173 使用。
+
+### 前端检查
+
+```bash
+cd frontend
+npm run lint
+npm run build
+```
+
+`lint` 检查前端代码质量，`build` 会执行 TypeScript 类型检查并生成生产构建。
+
+## 前端架构
+
+前端按“共享基础组件 + 业务功能模块 + 页面组合”拆分：
+
+- `components/ui/` 提供与业务无关的卡片、字段和泛型表格。
+- `components/ai/` 统一处理 LLM 请求的执行状态、错误和结果展示。
+- `features/scores/` 与 `features/clubs/` 保存各自的表单、表格、类型与字段配置。
+- `useCrudCollection` 统一列表加载、新增、删除、刷新和错误状态。
+- `pages/` 只负责组合组件并连接对应 API，不再包含大段重复表单和表格 JSX。
+- `styles/` 按布局、表单、表格和 Agent 区域拆分，`App.css` 仅作为样式入口。
+
+添加新看板时，应优先复用 `SectionCard`、`FormField`、`DataTable` 和 `AgentResultCard`，并把领域代码放进独立的 `features/<name>/` 目录。
 
 ## 功能
 
