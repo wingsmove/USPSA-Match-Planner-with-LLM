@@ -6,7 +6,22 @@ type ScoreField = {
   label: string;
   type?: HTMLInputTypeAttribute;
   placeholder?: string;
+  options?: string[]; // 提供时渲染为下拉选择
 };
+
+// 下拉选项
+const DIVISION_OPTIONS = [
+  "CO",
+  "LO",
+  "Limited",
+  "Open",
+  "PCC",
+  "Production",
+  "SingleStack",
+  "Revolver",
+];
+const CLASS_OPTIONS = ["U", "D", "C", "B", "A", "M", "GM"];
+const POWER_FACTOR_OPTIONS = ["MINOR", "MAJOR"];
 
 export const EMPTY_SCORE_FORM: ScoreFormValues = {
   percent: "",
@@ -35,9 +50,9 @@ export const SCORE_FIELDS: ScoreField[] = [
     label: "% psbl",
     placeholder: "42.30%",
   },
-  { name: "division", label: "Div" },
-  { name: "shooter_class", label: "Class" },
-  { name: "power_factor", label: "PF" },
+  { name: "division", label: "Div", options: DIVISION_OPTIONS },
+  { name: "shooter_class", label: "Class", options: CLASS_OPTIONS },
+  { name: "power_factor", label: "PF", options: POWER_FACTOR_OPTIONS },
   { name: "hits_a", label: "A", type: "number" },
   { name: "hits_c", label: "C", type: "number" },
   { name: "hits_d", label: "D", type: "number" },

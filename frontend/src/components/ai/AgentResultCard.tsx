@@ -36,8 +36,12 @@ function AgentResultCard({
   }
 
   return (
-    <SectionCard title={title} className="agent-card">
-      <p>{description}</p>
+    <SectionCard
+      title={title}
+      eyebrow="AI 教练"
+      description={description}
+      className="agent-card"
+    >
       <button className="analyze-button" onClick={run} disabled={pending}>
         {pending ? pendingLabel : actionLabel}
       </button>

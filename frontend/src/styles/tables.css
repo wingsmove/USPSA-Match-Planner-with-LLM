@@ -1,28 +1,71 @@
+.table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  background: var(--surface-deep);
+}
+
 table {
   width: 100%;
+  min-width: 720px;
   border-collapse: collapse;
 }
 
 th,
 td {
-  padding: 8px 10px;
-  border-bottom: 1px solid #333;
+  padding: 0.78rem 0.85rem;
+  border-bottom: 1px solid var(--border);
   text-align: left;
-  font-size: 14px;
+  white-space: nowrap;
 }
 
 th {
-  color: #9ab;
+  color: var(--muted);
+  background: #111411;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+td {
+  color: #d8dbd4;
+  font-size: 0.82rem;
+}
+
+tbody tr {
+  transition: background 120ms ease;
+}
+
+tbody tr:hover {
+  background: rgba(199, 243, 107, 0.045);
+}
+
+tbody tr:last-child td {
+  border-bottom: 0;
 }
 
 .delete-button {
-  border: none;
-  padding: 4px 8px;
-  background: #ff0000;
-  border-radius: 4px;
+  border-color: rgba(255, 139, 101, 0.35);
+  padding: 0.38rem 0.65rem;
+  color: var(--warning);
+  background: rgba(255, 139, 101, 0.08);
+  font-size: 0.72rem;
 }
 
-.delete-button:hover {
-  background: #ff6565;
-  cursor: pointer;
+.delete-button:hover:not(:disabled) {
+  border-color: var(--warning);
+  color: #1a0e09;
+  background: var(--warning);
+}
+
+.empty-state {
+  margin: 0;
+  border: 1px dashed var(--border-strong);
+  border-radius: 0.75rem;
+  padding: 2.5rem 1rem;
+  color: var(--muted);
+  text-align: center;
 }

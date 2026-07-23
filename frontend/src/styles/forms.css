@@ -1,72 +1,83 @@
 .form-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+  gap: 0.8rem;
   align-items: end;
 }
 
 .form-flex-row {
-  display: flex;
-  flex-direction: row;
-  gap: 12px;
+  display: grid;
+  grid-template-columns: minmax(180px, 0.7fr) minmax(280px, 1.3fr) auto;
+  gap: 0.8rem;
   align-items: end;
 }
 
 .form-grid label,
 .form-flex-row label {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  font-size: 13px;
+  display: grid;
+  gap: 0.42rem;
+  color: var(--muted);
+  font-size: 0.76rem;
 }
 
 .form-grid input,
-.form-flex-row input {
-  padding: 6px 8px;
-  border-radius: 6px;
-  border: 1px solid #555;
-  background: #2a2a2a;
-  color: inherit;
+.form-grid select,
+.form-flex-row input,
+.form-flex-row select {
+  width: 100%;
+  min-width: 0;
+  height: 2.6rem;
+  border: 1px solid var(--border);
+  border-radius: 0.55rem;
+  padding: 0.68rem 0.75rem;
+  color: var(--text);
+  background: var(--surface-deep);
+  outline: none;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
 }
 
-.url-label {
-  flex: 1;
-}
-
-.form-grid button,
-.form-flex-row button {
-  border: none;
-  border-radius: 8px;
-  background: #4f8cff;
-  color: white;
+.form-grid select,
+.form-flex-row select {
+  appearance: none;             /* 去掉浏览器默认样式，保持与输入框一致 */
   cursor: pointer;
-  font-weight: 600;
+}
+
+.form-grid input::placeholder,
+.form-flex-row input::placeholder {
+  color: #657064;
+}
+
+.form-grid input:focus,
+.form-grid select:focus,
+.form-flex-row input:focus,
+.form-flex-row select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(199, 243, 107, 0.08);
 }
 
 .form-grid button {
   grid-column: 1 / -1;
-  justify-self: center;
-  padding: 8px 32px;
+  justify-self: start;
+  min-width: 9rem;
 }
 
 .form-flex-row button {
-  padding: 6px 16px;
+  min-height: 2.75rem;
 }
 
-.form-grid button:hover,
-.form-flex-row button:hover {
-  background: #3a78f0;
-}
-
-.form-grid button:disabled,
-.form-flex-row button:disabled {
-  background: #555;
-  cursor: not-allowed;
-}
-
-@media (max-width: 640px) {
+@media (max-width: 720px) {
   .form-flex-row {
-    align-items: stretch;
-    flex-direction: column;
+    grid-template-columns: 1fr;
+  }
+
+  .form-flex-row button,
+  .form-grid button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 520px) {
+  .form-grid {
+    grid-template-columns: 1fr;
   }
 }

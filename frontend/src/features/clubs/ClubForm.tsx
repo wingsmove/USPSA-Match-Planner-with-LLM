@@ -15,7 +15,9 @@ function ClubForm({ onSubmit }: ClubFormProps) {
   const [form, setForm] = useState<ClubCreate>(EMPTY_CLUB);
   const [submitting, setSubmitting] = useState(false);
 
-  function handleChange(event: ChangeEvent<HTMLInputElement>) {
+  function handleChange(
+    event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) {
     const { name, value } = event.target;
     setForm((current) => ({ ...current, [name]: value }));
   }
@@ -36,18 +38,18 @@ function ClubForm({ onSubmit }: ClubFormProps) {
   return (
     <form onSubmit={handleSubmit} className="form-flex-row">
       <FormField
-        label="Club Name"
+        label="俱乐部名称"
         name="club_name"
         value={form.club_name}
         onChange={handleChange}
-        placeholder="Club Name"
+        placeholder="俱乐部名称"
       />
       <FormField
-        label="Club URL"
+        label="俱乐部网址"
         name="club_url"
         value={form.club_url}
         onChange={handleChange}
-        placeholder="Club URL"
+        placeholder="俱乐部网址"
         className="url-label"
       />
       <button type="submit" disabled={submitting}>

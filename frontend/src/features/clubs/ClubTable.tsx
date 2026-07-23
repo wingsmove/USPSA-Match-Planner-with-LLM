@@ -10,10 +10,10 @@ type ClubTableProps = {
 
 function ClubTable({ clubs, onDelete }: ClubTableProps) {
   const columns: TableColumn<Club>[] = [
-    { key: "name", header: "Club Name", render: (club) => club.club_name },
+    { key: "name", header: "俱乐部名称", render: (club) => club.club_name },
     {
       key: "url",
-      header: "Club URL",
+      header: "俱乐部网址",
       render: (club) => club.club_url,
     },
     {

@@ -15,7 +15,9 @@ function ScoreForm({ onSubmit }: ScoreFormProps) {
   const [form, setForm] = useState<ScoreFormValues>(EMPTY_SCORE_FORM);
   const [submitting, setSubmitting] = useState(false);
 
-  function handleChange(event: ChangeEvent<HTMLInputElement>) {
+  function handleChange(
+    event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) {
     const { name, value } = event.target;
     setForm((current) => ({ ...current, [name]: value }));
   }
@@ -44,6 +46,7 @@ function ScoreForm({ onSubmit }: ScoreFormProps) {
           onChange={handleChange}
           type={field.type}
           placeholder={field.placeholder}
+          options={field.options}
         />
       ))}
       <button type="submit" disabled={submitting}>
