@@ -7,6 +7,8 @@
     - 健康检查：http://127.0.0.1:8000/
 """
 
+import os
+
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
@@ -22,10 +24,19 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="USPSA Score API")
 
-# CORS：允许前端（Vite 默认跑在 5173 端口）跨域访问本后端
+# 本地默认允许 Vite；Azure 通过逗号分隔的 ALLOWED_ORIGINS 注入正式前端地址。
+ALLOWED_ORIGINS = [
+    origin.strip()
+    for origin in os.getenv(
+        "ALLOWED_ORIGINS",
+        "http://localhost:5173,http://127.0.0.1:5173",
+    ).split(",")
+    if origin.strip()
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_origins=ALLOWED_ORIGINS,
     allow_methods=["*"],
     allow_headers=["*"],
 )

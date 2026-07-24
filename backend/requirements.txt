@@ -6,3 +6,4 @@ openai
 python-dotenv
 cloudscraper
 beautifulsoup4
+psycopg[binary]
