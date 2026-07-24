@@ -6,9 +6,7 @@
 
 ## 在线演示
 
-- 前端：[Azure Static Web Apps](https://gray-island-02033db0f.7.azurestaticapps.net/)
-- 后端健康检查：[Azure Container Apps](https://uspsa-api.delightfulbeach-9485b16e.eastus.azurecontainerapps.io/)
-- API 文档：[FastAPI Swagger UI](https://uspsa-api.delightfulbeach-9485b16e.eastus.azurecontainerapps.io/docs)
+[Azure Static Web Apps](https://gray-island-02033db0f.7.azurestaticapps.net/)
 
 ## 当前云端架构
 
@@ -214,22 +212,6 @@ docker run --rm -p 8000:8000 \
 
 生产部署不会把 `.env` 或数据库密码复制进镜像。
 
-## API
-
-| 方法 | 路径 | 说明 |
-|---|---|---|
-| `GET` | `/` | 健康检查 |
-| `GET` | `/scores` | 查询全部成绩 |
-| `POST` | `/scores` | 新增成绩 |
-| `DELETE` | `/scores/{id}` | 删除成绩 |
-| `POST` | `/scores/import` | 从本地 JSON 导入成绩 |
-| `GET` | `/scores/export` | 将成绩导出为 JSON |
-| `POST` | `/analyze` | 生成并持久化 LLM 成绩分析 |
-| `GET` | `/clubs` | 查询全部俱乐部 |
-| `POST` | `/clubs` | 新增俱乐部 |
-| `DELETE` | `/clubs/{id}` | 删除俱乐部 |
-| `POST` | `/plan` | 抓取比赛并生成 LLM 规划 |
-
 ## CI/CD
 
 ### 前端
@@ -288,10 +270,6 @@ az containerapp logs show `
 ## 当前限制与安全边界
 
 - 当前没有登录系统，所有访问者共享同一数据库内容。
-- `scores`、`clubs` 和 `analysis_reports` 尚未包含 `user_id`。
-- CORS 不是身份验证；知道 API地址的访问者仍可能直接调用公开接口。
-- 不应在当前公开部署中保存敏感或私密数据。
-- Container Apps中的 `Matches/`、`Past_Reports/` 和导出文件仍属于临时文件；正式持久化数据应保存在 PostgreSQL。
 - 外部比赛信息的准确性和时效性以来源页面为准，应遵守目标网站服务条款并控制请求频率。
 
 计划中的多用户方案是后端签发匿名 Token、数据库按 `owner_id` 隔离数据，并允许匿名身份以后升级为正式账号。IP地址只用于限流和反滥用，不作为用户身份。
