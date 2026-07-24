@@ -42,7 +42,10 @@ def analyze_db_scores(db: Session) -> str:
     rows = db.query(models.Score).order_by(models.Score.id).all()
     records = [{field: getattr(row, field) for field in _FIELDS} for row in rows]
     scores_json = json.dumps(records, ensure_ascii=False, indent=2)
-    return run_agent(score_agent, f"成绩数据：\n{scores_json}")
+    report = run_agent(score_agent, f"成绩数据：\n{scores_json}")
+    db.add(models.AnalysisReport(content=report))
+    db.commit()
+    return report
 
 def plan_matches(db: Session) -> str:
     """从数据库读取俱乐部，爬取各俱乐部即将进行的比赛，转成 JSON 交给比赛规划 Agent。"""

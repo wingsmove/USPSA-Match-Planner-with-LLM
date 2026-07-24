@@ -2,57 +2,89 @@
 
 import json
 import os
-import sqlite3
+import sys
 
 from agents import Agent, ModelSettings, Runner, function_tool
 
-from config import MAX_PAST_REPORTS, MODEL, PAST_REPORTS_DIR
-from storage import read_dir_files
+from config import MAX_PAST_REPORTS, MODEL
 
-# backend/app.db 的绝对路径（本文件在 backend/LLMs/ 下，app.db 在 backend/ 下）
-_DB_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "app.db")
+# 复用 FastAPI 使用的 SQLAlchemy engine。数据库类型由 DATABASE_URL 决定：
+# 本地默认连接 SQLite，Azure 则连接 PostgreSQL。
+_BACKEND_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _BACKEND_DIR not in sys.path:
+    sys.path.append(_BACKEND_DIR)
+
+import models  # noqa: E402
+from database import SessionLocal  # noqa: E402
+
+
+def _read_past_scores() -> str:
+    """从当前 DATABASE_URL 指向的数据库读取历史成绩。"""
+    db = SessionLocal()
+    try:
+        rows = db.query(models.Score).order_by(models.Score.id).all()
+    finally:
+        db.close()
+    if not rows:
+        return "（数据库暂无成绩）"
+    records = [
+        {
+            column.name: getattr(row, column.name)
+            for column in models.Score.__table__.columns
+        }
+        for row in rows
+    ]
+    return json.dumps(records, ensure_ascii=False, indent=2, default=str)
+
 
 #读取历史成绩数据（从数据库 scores 表读取）
 @function_tool
 def get_past_scores() -> str:
-    if not os.path.exists(_DB_PATH):
-        return "（数据库不存在或暂无成绩）"
-    conn = sqlite3.connect(_DB_PATH)
-    conn.row_factory = sqlite3.Row  # 让每行可按列名取值
+    return _read_past_scores()
+
+
+def _read_past_reports() -> str:
+    """从数据库读取最近的历史分析报告。"""
+    db = SessionLocal()
     try:
-        rows = conn.execute("SELECT * FROM scores ORDER BY id").fetchall()
-    except sqlite3.OperationalError:
-        return "（数据库中没有 scores 表）"
+        reports = (
+            db.query(models.AnalysisReport)
+            .order_by(models.AnalysisReport.id.desc())
+            .limit(MAX_PAST_REPORTS)
+            .all()
+        )
     finally:
-        conn.close()
-    if not rows:
-        return "（数据库暂无成绩）"
-    records = [dict(row) for row in rows]
-    return json.dumps(records, ensure_ascii=False, indent=2, default=str)
+        db.close()
+    if not reports:
+        return "（数据库暂无历史分析报告）"
+    return "\n\n".join(
+        f"### 历史报告 {report.id}\n{report.content}"
+        for report in reports
+    )
+
 
 #读取最近的历史分析报告（限制数量，避免上下文过长）
 @function_tool
 def get_past_reports() -> str:
-    return read_dir_files(PAST_REPORTS_DIR, ".md", limit=MAX_PAST_REPORTS)
+    return _read_past_reports()
+
+
+def _read_current_class() -> str:
+    """从当前数据库的最新成绩读取 USPSA 级别。"""
+    db = SessionLocal()
+    try:
+        row = db.query(models.Score).order_by(models.Score.id.desc()).first()
+    finally:
+        db.close()
+    if not row or not row.shooter_class:
+        return "U"
+    return row.shooter_class
+
 
 #读取最新一场成绩的 class，作为射手当前的 class；没有过往成绩则默认 U（未定级）
 @function_tool
 def get_class() -> str:
-    if not os.path.exists(_DB_PATH):
-        return "U"
-    conn = sqlite3.connect(_DB_PATH)
-    conn.row_factory = sqlite3.Row
-    try:
-        row = conn.execute(
-            "SELECT shooter_class FROM scores ORDER BY id DESC LIMIT 1"
-        ).fetchone()
-    except sqlite3.OperationalError:
-        return "U"
-    finally:
-        conn.close()
-    if not row or not row["shooter_class"]:
-        return "U"
-    return row["shooter_class"]
+    return _read_current_class()
 
 
 # Agent 1：比赛规划

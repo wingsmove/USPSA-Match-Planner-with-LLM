@@ -4,7 +4,7 @@
 SQLAlchemy 会据此在数据库里创建对应的表。
 """
 
-from sqlalchemy import Column, DateTime, Integer, String, func
+from sqlalchemy import Column, DateTime, Integer, String, Text, func
 
 from database import Base
 
@@ -48,3 +48,13 @@ class Club(Base):
     # 俱乐部字段（与项目里俱乐部 JSON 的字段对应）
     club_name = Column(String)         # 俱乐部名称
     club_url = Column(String)          # 俱乐部 URL
+
+
+class AnalysisReport(Base):
+    """一份由 LLM 生成的成绩分析报告。"""
+
+    __tablename__ = "analysis_reports"
+
+    id = Column(Integer, primary_key=True, index=True)
+    content = Column(Text, nullable=False)
+    created_at = Column(DateTime, server_default=func.now(), index=True)
